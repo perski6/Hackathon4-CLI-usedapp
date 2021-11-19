@@ -6,9 +6,14 @@
   "author": "mateusz <mistrzumati@spoko.pl>",
   "license": "MIT",
   "dependencies": {
+    "@types/jquery": "^3.5.8",
     "@types/node": "^16.11.9",
+    "axios": "^0.24.0",
+    "commander": "^8.3.0",
     "gitignore": "^0.7.0",
-    "typescript": "^4.5.2"
+    "save-dev": "^0.0.1-security",
+    "typescript": "^4.5.2",
+    "web3": "^1.6.1"
   },
   "scripts": {
     "build": "tsc",
