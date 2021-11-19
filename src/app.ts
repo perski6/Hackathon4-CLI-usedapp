@@ -10,23 +10,36 @@ type ContractRequest = {
     result: string
 }
 
+type singleContractObject = {
+    constant: boolean
+    inputs: any
+    name: string
+    outputs: any
+    type: string
+}
+
 program.version('0.0.1')
 
-async function createInterface() {
+function leaveOnlyFunctions(jsonObject: singleContractObject[]) {
+    const result: singleContractObject[] = []
+    for(const obj of jsonObject) {
+        if(obj.type === 'function') {
+            result.push(obj)
+        }
+    }
+    return result
+}
+
+async function createInterface(contractAddress: string) {
     
-    const response = await axios.get('https://api.etherscan.io/api?module=contract&action=getabi&address=0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359')
+    const response = await axios.get('https://api.etherscan.io/api?module=contract&action=getabi&address=' + contractAddress)
     
     const data: ContractRequest = response.data
 
     const contractABI = JSON.parse(data.result);;
     if (contractABI) {
-        console.log(contractABI)
-        // const MyContract = web3.eth.contract(contractABI)
-        // const myContractInstance = MyContract.at('0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359')
-        // const result1 = myContractInstance.memberId('0xfe8ad7dd2f564a877cc23feea6c0a9cc2e783715')
-        // console.log('result1 : ' + result1)   
-        // const result2 = myContractInstance.members(1)
-        // console.log('result2 : ' + result2)
+        const filteredContractAbi = leaveOnlyFunctions(contractABI)
+        console.log(filteredContractAbi)
     } else {
         console.log('Error')
     }
@@ -34,7 +47,10 @@ async function createInterface() {
 
 program
     .command('createInterface')
+    .argument('<contractAddress>')
     .description('Create contract clickable interface')
-    .action(createInterface)
+    .action((contractAddress) => {
+        createInterface(contractAddress)
+    })
 
 program.parse(process.argv)
